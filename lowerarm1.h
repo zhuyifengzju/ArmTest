@@ -48,25 +48,26 @@
 **
 ****************************************************************************/
 
-#ifndef Desk_H
-#define Desk_H
+#ifndef LOWERARM1_H
+#define LOWERARM1_H
 
 #include <qopengl.h>
 #include <QVector>
 #include <QVector3D>
 
-class Desk
+class LowerArm1
 {
 public:
-    Desk();
+    LowerArm1();
     const GLfloat *constData() const { return m_data.constData(); }
 
     int count() const { return m_count; }
     int vertexCount() const { return m_count / 6; }
-
+    bool loadOBJ(const char * path,std::vector<QVector3D> & out_vertices,std::vector<QVector3D> & out_normals);
 private:
     void quad(GLfloat x1, GLfloat y1,GLfloat x2, GLfloat y2, GLfloat x3, GLfloat y3,GLfloat x4, GLfloat y4);
-    void quad1(GLfloat x1, GLfloat y1,GLfloat z1, GLfloat x2, GLfloat y2, GLfloat z2, GLfloat x3, GLfloat y3, GLfloat z3, GLfloat x4, GLfloat y4, GLfloat z4);
+    void quad1(GLfloat x1, GLfloat y1,GLfloat z1, GLfloat x2, GLfloat y2, GLfloat z2, GLfloat x3, GLfloat y3, GLfloat z3,
+               QVector3D n1, QVector3D n2, QVector3D n3);
     void extrude(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2);
     void add(const QVector3D &v, const QVector3D &n);
     double width;
@@ -74,4 +75,4 @@ private:
     int m_count;
 };
 
-#endif // Desk_H
+#endif // LowerArm1_H

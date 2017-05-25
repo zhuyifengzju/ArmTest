@@ -89,7 +89,7 @@ void Leg::quad(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2, GLfloat x3, GLflo
 
 void Leg::extrude(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)
 {
-    QVector3D n = QVector3D::normal(QVector3D(0.0f, 0.0f, -0.1f), QVector3D(x2 - x1, y2 - y1, 0.0f));
+    QVector3D n = QVector3D::normal(QVector3D(0.0f, 0.0f, 0.1f), QVector3D(x2 - x1, y2 - y1, 0.0f));
 
     add(QVector3D(x1, y1, +width), n);
     add(QVector3D(x1, y1, -width), n);

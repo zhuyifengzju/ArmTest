@@ -48,99 +48,31 @@
 **
 ****************************************************************************/
 
-#ifndef GLWIDGET_H
-#define GLWIDGET_H
-#include <QTimer>
-#include <QOpenGLWidget>
-#include <QOpenGLFunctions>
-#include <QOpenGLVertexArrayObject>
-#include <QOpenGLBuffer>
-#include <QMatrix4x4>
-#include "logo.h"
-#include "lowerarm1.h"
-#include "lowerarm2.h"
-#include "lowerarm3.h"
-#include "bat.h"
-#include "shoulder.h"
-#include "upperarm1.h"
-#include "upperarm2.h"
+#ifndef LOWERARM2_H
+#define LOWERARM2_H
 
-#include "leg.h"
-#include<vector>
+#include <qopengl.h>
+#include <QVector>
+#include <QVector3D>
 
-QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram)
-
-class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
+class LowerArm2
 {
-    Q_OBJECT
-
 public:
-    GLWidget(QWidget *parent = 0);
-    ~GLWidget();
+    LowerArm2();
+    const GLfloat *constData() const { return m_data.constData(); }
 
-    QSize minimumSizeHint() const override;
-    QSize sizeHint() const override;
-    std::vector<double> x,y,z;
-public slots:
-    void setXRotation(int angle);
-    void setYRotation(int angle);
-    void setZRotation(int angle);
-    void animate();
-    void cleanup();
-
-
-signals:
-    void xRotationChanged(int angle);
-    void yRotationChanged(int angle);
-    void zRotationChanged(int angle);
-
-protected:
-    void initializeGL() override;
-    void paintGL() override;
-    void resizeGL(int width, int height) override;
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
-
+    int count() const { return m_count; }
+    int vertexCount() const { return m_count / 6; }
+    bool loadOBJ(const char * path,std::vector<QVector3D> & out_vertices,std::vector<QVector3D> & out_normals);
 private:
-    void setupVertexAttribs(QOpenGLBuffer);
-    int elapsed;
-    bool m_core;
-    int m_xRot;
-    int m_yRot;
-    int m_zRot;
-    double ball_xRot;
-    double ball_yRot;
-    double ball_zRot;
-    QPoint m_lastPos;
-    Logo m_logo;
-
-
-
-    LowerArm1 m_lowerarm1;
-    LowerArm2 m_lowerarm2;
-    LowerArm3 m_lowerarm3;
-    UpperArm1 m_upperarm1;
-    UpperArm2 m_upperarm2;
-    Bat m_bat;
-    Shoulder m_shoulder;
-    QOpenGLVertexArrayObject vao[7];
-    QOpenGLBuffer vbo[7];
-
-
-    Leg m_leg;
-    QOpenGLVertexArrayObject m_vao,m_vao1,m_vao2,m_vaoleg;
-    QOpenGLBuffer m_logoVbo,m_logoVbo1,m_logoVbo2,m_logoVboleg;
-    QOpenGLShaderProgram *m_program;
-    int m_projMatrixLoc;
-    int m_mvMatrixLoc;
-    int m_normalMatrixLoc;
-    int m_lightPosLoc;
-    int m_color;
-    QMatrix4x4 m_proj;
-    QMatrix4x4 m_camera;
-    QMatrix4x4 m_world;
-    bool m_transparent;
-    const double leg_trans[4][3]={{-10.0f, 0.0f, 5.5f},{-10.0f , 0.0f ,-5.5f},{10.0f,  0.0f, 5.5f},{10.0f, 0.0f, -5.5f}};
+    void quad(GLfloat x1, GLfloat y1,GLfloat x2, GLfloat y2, GLfloat x3, GLfloat y3,GLfloat x4, GLfloat y4);
+    void quad1(GLfloat x1, GLfloat y1,GLfloat z1, GLfloat x2, GLfloat y2, GLfloat z2, GLfloat x3, GLfloat y3, GLfloat z3,
+               QVector3D n1, QVector3D n2, QVector3D n3);
+    void extrude(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2);
+    void add(const QVector3D &v, const QVector3D &n);
+    double width;
+    QVector<GLfloat> m_data;
+    int m_count;
 };
 
-#endif
+#endif // LowerArm2_H

@@ -20,9 +20,15 @@ SOURCES += main.cpp\
     dataflow.cpp \
     qcustomplot.cpp \
     plotwidget.cpp \
-    desk.cpp \
     leg.cpp \
-    udp.cpp
+    udp.cpp \
+    lowerarm1.cpp \
+    lowerarm2.cpp \
+    lowerarm3.cpp \
+    shoulder.cpp \
+    bat.cpp \
+    upperarm2.cpp \
+    upperarm1.cpp
 
 HEADERS  += mainwindow.h \
     window.h \
@@ -31,9 +37,15 @@ HEADERS  += mainwindow.h \
     dataflow.h \
     qcustomplot.h \
     plotwidget.h \
-    desk.h \
     leg.h \
-    udp.h
+    udp.h \
+    lowerarm1.h \
+    lowerarm2.h \
+    bat.h \
+    lowerarm3.h \
+    upperarm1.h \
+    upperarm2.h \
+    shoulder.h
 
 FORMS    += mainwindow.ui
 

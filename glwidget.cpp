@@ -51,6 +51,7 @@
 #include "glwidget.h"
 #include <QMouseEvent>
 #include <QOpenGLContext>
+
 #include <QOpenGLShaderProgram>
 #include <QCoreApplication>
 #include <math.h>
@@ -193,30 +194,77 @@ void GLWidget::initializeGL()
     setupVertexAttribs(m_logoVbo);
     m_vao.release();
 
-    m_vao1.create();
-    QOpenGLVertexArrayObject::Binder vaoBinder1(&m_vao1);
+    vao[0].create();
+    QOpenGLVertexArrayObject::Binder vaoBinder1(&vao[0]);
 
-    m_logoVbo1.create();
-    m_logoVbo1.bind();
-    m_logoVbo1.allocate(m_desk.constData(), m_desk.count() * sizeof(GLfloat));
-    setupVertexAttribs(m_logoVbo1);
-    m_vao1.release();
+    vbo[0].create();
+    vbo[0].bind();
+    vbo[0].allocate(m_lowerarm1.constData(), m_lowerarm1.count() * sizeof(GLfloat));
+    setupVertexAttribs(vbo[0]);
+    vao[0].release();
 
-    m_vaoleg.create();
-    QOpenGLVertexArrayObject::Binder vaoBinder2(&m_vaoleg);
 
-    m_logoVboleg.create();
-    m_logoVboleg.bind();
-    m_logoVboleg.allocate(m_leg.constData(), m_leg.count() * sizeof(GLfloat));
-    setupVertexAttribs(m_logoVboleg);
-    m_vaoleg.release();
+    vao[1].create();
+    QOpenGLVertexArrayObject::Binder vaoBinder2(&vao[1]);
 
+    vbo[1].create();
+    vbo[1].bind();
+    vbo[1].allocate(m_lowerarm2.constData(), m_lowerarm2.count() * sizeof(GLfloat));
+    setupVertexAttribs(vbo[1]);
+    vao[1].release();
+
+    vao[2].create();
+    QOpenGLVertexArrayObject::Binder vaoBinder3(&vao[2]);
+
+    vbo[2].create();
+    vbo[2].bind();
+    vbo[2].allocate(m_lowerarm3.constData(), m_lowerarm3.count() * sizeof(GLfloat));
+    setupVertexAttribs(vbo[2]);
+    vao[2].release();
+
+
+    vao[3].create();
+    QOpenGLVertexArrayObject::Binder vaoBinder4(&vao[3]);
+
+    vbo[3].create();
+    vbo[3].bind();
+    vbo[3].allocate(m_bat.constData(), m_bat.count() * sizeof(GLfloat));
+    setupVertexAttribs(vbo[3]);
+    vao[3].release();
+
+    vao[4].create();
+    QOpenGLVertexArrayObject::Binder vaoBinder5(&vao[4]);
+
+    vbo[4].create();
+    vbo[1].bind();
+    vbo[4].allocate(m_upperarm1.constData(), m_upperarm1.count() * sizeof(GLfloat));
+    setupVertexAttribs(vbo[4]);
+    vao[4].release();
+
+
+    vao[5].create();
+    QOpenGLVertexArrayObject::Binder vaoBinder6(&vao[5]);
+
+    vbo[5].create();
+    vbo[5].bind();
+    vbo[5].allocate(m_upperarm2.constData(), m_upperarm2.count() * sizeof(GLfloat));
+    setupVertexAttribs(vbo[5]);
+    vao[5].release();
+
+    vao[6].create();
+    QOpenGLVertexArrayObject::Binder vaoBinder7(&vao[6]);
+
+    vbo[6].create();
+    vbo[6].bind();
+    vbo[6].allocate(m_shoulder.constData(), m_shoulder.count() * sizeof(GLfloat));
+    setupVertexAttribs(vbo[6]);
+    vao[6].release();
     // Our camera never changes in this example.
     m_camera.setToIdentity();
     //m_camera.translate(0, 0, -10);
     m_camera.lookAt(QVector3D(0.0f,0.0f,50.0f), QVector3D(0.0f,0.0f,0.0f),QVector3D(0.0f,1.0f,0.0f));
      // Light position is fixed.
-    m_program->setUniformValue(m_lightPosLoc, QVector3D(0, 0, 70));
+    m_program->setUniformValue(m_lightPosLoc, QVector3D(10, 30, 30));
 
     m_program->release();
 
@@ -238,11 +286,13 @@ void GLWidget::setupVertexAttribs(QOpenGLBuffer logoVbo)
 
 void GLWidget::paintGL()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_PERSPECTIVE_CORRECTION_HINT);
 
+    QMatrix3x3 normalMatrix;
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glEnable(GL_CULL_FACE);
+ //   glEnable(GL_PERSPECTIVE_CORRECTION_HINT);
+     glEnable(GL_DEPTH_TEST);
 
     m_camera.setToIdentity();
     //std::cout<< cos(m_yRot*2*M_PI/180) * sin(m_xRot*2*M_PI/180)<<" "<<sin(m_yRot*2*M_PI/180)<<" "<<cos(m_yRot*2*M_PI/180)*cos(m_xRot*2*M_PI/180)<<std::endl;
@@ -252,79 +302,100 @@ void GLWidget::paintGL()
     m_camera.lookAt(QVector3D(r * cos((m_yRot-180)*2*M_PI/180) * sin(m_xRot*2*M_PI/180), r*sin((m_yRot-180)*2*M_PI/180),r*cos((m_yRot-180)*2*M_PI/180)*cos(m_xRot*2*M_PI/180)), QVector3D(0.0f,0.0f,0.0f),QVector3D(0.0f,1.0f,0.0f));
 
     m_world.setToIdentity();
-/*
 
 
-     m_world.translate(-1.0f,2.0f,0.0f);
-
-     m_world.rotate(180.0f - ((ball_xRot) / 16.0f), 1, 0, 0);
-     m_world.rotate(ball_yRot / 16.0f, 0, 1, 0);
-     m_world.rotate(ball_zRot / 16.0f, 0, 0, 1);
-
-     m_vao.bind();
-     m_program->bind();
-     m_program->setUniformValue(m_projMatrixLoc, m_proj);
-     m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_world);
-     QMatrix3x3 normalMatrix = m_world.normalMatrix();
-     m_program->setUniformValue(m_color, QVector3D(1.0,0.8,0.0));
-     m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
-
-     glDrawArrays(GL_TRIANGLES, 0, m_logo.vertexCount());
-     m_vao.release();
-*/
-
-
-    QMatrix3x3 normalMatrix;
-      for (int k=0;k<x.size();k++)
-      {
-         m_world.setToIdentity();
-         m_world.translate(x[k]*7.5f,y[k]*7.5f,z[k]*7.5f);
-
-
-         m_vao.bind();
-         m_program->bind();
-
-         m_program->setUniformValue(m_projMatrixLoc,m_proj);
-              m_program->setUniformValue(m_color, QVector3D(1.0,0.8,0.0));
-              normalMatrix = m_world.normalMatrix();
-         m_program->setUniformValue(m_mvMatrixLoc, m_camera*m_world);
-         normalMatrix = m_world.normalMatrix();
-         m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
-         glDrawArrays(GL_TRIANGLES, 0, m_logo.vertexCount());
-         m_vao.release();
-      }
-
-
-
-
-
-     m_world.setToIdentity();
      //m_world.translate(1.0f,1.0f,-15.0f);
-
+/*
      m_vao1.bind();
      m_program->bind();
      m_program->setUniformValue(m_projMatrixLoc, m_proj);
      m_program->setUniformValue(m_mvMatrixLoc, m_camera*m_world);
-     m_program->setUniformValue(m_color, QVector3D(0.0,0.0,1.0));
-     normalMatrix = m_world.normalMatrix();
+     m_program->setUniformValue(m_color, QVector3D(1.0,1.0,1.0));
+     QMatrix3x3 normalMatrix = m_world.normalMatrix();
      m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
-     glDrawArrays(GL_TRIANGLES, 0, m_desk.vertexCount());
+     glDrawArrays(GL_TRIANGLES, 0, m_lowerarm1.vertexCount());
      m_vao1.release();
+*/
 
-     for (int k=0;k<4;k++)
-     {
-     m_world.setToIdentity();
-     m_world.translate(leg_trans[k][0],leg_trans[k][1],leg_trans[k][2]);
 
-     m_vaoleg.bind();
-     m_program->setUniformValue(m_projMatrixLoc, m_proj);
-     m_program->setUniformValue(m_mvMatrixLoc, m_camera*m_world);
-     m_program->setUniformValue(m_color, QVector3D(0.0,0.5,0.5));
-     normalMatrix = m_world.normalMatrix();
-     m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
-     glDrawArrays(GL_TRIANGLES, 0, m_leg.vertexCount());
-     m_vaoleg.release();
-    }
+    vao[0].bind();
+    m_program->bind();
+    m_program->setUniformValue(m_projMatrixLoc, m_proj);
+    m_program->setUniformValue(m_mvMatrixLoc, m_camera*m_world);
+    m_program->setUniformValue(m_color, QVector3D(1.0,.0,1.0));
+    normalMatrix = m_world.normalMatrix();
+    m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, m_lowerarm1.vertexCount());
+    vao[0].release();
+
+
+    vao[1].bind();
+    m_program->bind();
+    m_program->setUniformValue(m_projMatrixLoc, m_proj);
+    m_program->setUniformValue(m_mvMatrixLoc, m_camera*m_world);
+    m_program->setUniformValue(m_color, QVector3D(1.0,.0,1.0));
+    normalMatrix = m_world.normalMatrix();
+    m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, m_lowerarm2.vertexCount());
+    vao[1].release();
+
+    vao[2].bind();
+    m_program->bind();
+    m_program->setUniformValue(m_projMatrixLoc, m_proj);
+    m_program->setUniformValue(m_mvMatrixLoc, m_camera*m_world);
+    m_program->setUniformValue(m_color, QVector3D(1.0,.0,1.0));
+    normalMatrix = m_world.normalMatrix();
+    m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, m_lowerarm3.vertexCount());
+    vao[2].release();
+    m_world.translate(-10.0f,1.0f,3.0f);
+
+    vao[3].bind();
+    m_program->bind();
+    m_program->setUniformValue(m_projMatrixLoc, m_proj);
+    m_program->setUniformValue(m_mvMatrixLoc, m_camera*m_world);
+    m_program->setUniformValue(m_color, QVector3D(1.0,.0,1.0));
+    normalMatrix = m_world.normalMatrix();
+    m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, m_bat.vertexCount());
+    vao[3].release();
+
+
+    m_world.setToIdentity();
+    m_world.translate(5.0f,1.0f,0.0f);
+
+    vao[4].bind();
+    m_program->bind();
+    m_program->setUniformValue(m_projMatrixLoc, m_proj);
+    m_program->setUniformValue(m_mvMatrixLoc, m_camera*m_world);
+    m_program->setUniformValue(m_color, QVector3D(1.0,.0,1.0));
+    normalMatrix = m_world.normalMatrix();
+    m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, m_upperarm1.vertexCount());
+    vao[4].release();
+
+    vao[5].bind();
+    m_program->bind();
+    m_program->setUniformValue(m_projMatrixLoc, m_proj);
+    m_program->setUniformValue(m_mvMatrixLoc, m_camera*m_world);
+    m_program->setUniformValue(m_color, QVector3D(1.0,.0,1.0));
+    normalMatrix = m_world.normalMatrix();
+    m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, m_upperarm2.vertexCount());
+    vao[5].release();
+
+
+    vao[6].bind();
+    m_program->bind();
+    m_program->setUniformValue(m_projMatrixLoc, m_proj);
+    m_program->setUniformValue(m_mvMatrixLoc, m_camera*m_world);
+    m_program->setUniformValue(m_color, QVector3D(1.0,.0,1.0));
+    normalMatrix = m_world.normalMatrix();
+    m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, m_shoulder.vertexCount());
+    vao[6].release();
+
+
 
      m_program->release();
 
